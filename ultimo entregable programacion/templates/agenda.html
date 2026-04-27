@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sm:flex sm:items-center sm:justify-between border-b border-slate-200 pb-5 mb-8">
+    <div>
+        <h2 class="text-2xl font-bold leading-7 text-slate-900 flex items-center gap-2">
+            <svg class="h-6 w-6 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            Daily Queue
+        </h2>
+        <p class="mt-2 text-sm text-slate-500">Strict management ordered by Date and Time (Earliest first).</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+        <form method="POST">
+            <button type="submit" 
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white {% if queue %}bg-brand-600 hover:bg-brand-700{% else %}bg-slate-400 cursor-not-allowed{% endif %} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
+                {% if not queue %}disabled{% endif %}>
+                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Call Next
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white shadow overflow-hidden sm:rounded-md border border-slate-200">
+    <ul class="divide-y divide-slate-200">
+        {% for client in queue %}
+        <li class="{% if loop.index == 1 %}bg-brand-50 border-l-4 border-brand-500{% else %}hover:bg-slate-50 border-l-4 border-transparent{% endif %} transition-colors">
+            <div class="px-4 py-4 sm:px-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            {% if loop.index == 1 %}
+                                <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-brand-100 text-brand-800 font-bold text-sm ring-2 ring-brand-500 ring-offset-2 relative overflow-hidden">
+                                    <img class="h-10 w-10 object-cover" src="{{ url_for('static', filename='img/' + client.gender + '_avatar.png') }}" alt="Avatar">
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-slate-100 text-slate-500 font-medium text-sm overflow-hidden">
+                                    <img class="h-10 w-10 object-cover" src="{{ url_for('static', filename='img/' + client.gender + '_avatar.png') }}" alt="Avatar">
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="ml-4 truncate">
+                            <p class="text-sm font-medium text-brand-600 truncate">{{ client.name }}</p>
+                            <p class="text-sm text-slate-500 truncate">ID: {{ client.id_card }}</p>
+                        </div>
+                    </div>
+                    <div class="ml-2 flex-shrink-0 flex flex-col items-end">
+                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            {{ client.attention_type }}
+                        </p>
+                        <p class="mt-2 text-sm text-slate-500 flex items-center">
+                            <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {{ client.appointment_date }} at {{ client.appointment_time }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% else %}
+        <li>
+            <div class="px-4 py-12 sm:px-6 text-center text-slate-500">
+                <svg class="mx-auto h-12 w-12 text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                The queue is empty. No patients waiting.
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

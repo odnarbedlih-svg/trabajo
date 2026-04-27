@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="border-b border-slate-200 pb-5 mb-8 flex justify-between items-end">
+        <div>
+            <h2 class="text-2xl font-bold leading-7 text-slate-900">Register Client Appointment</h2>
+            <p class="mt-2 text-sm text-slate-500">Enter the patient's data to add them to the clinic's queue.</p>
+        </div>
+        <!-- Backend test generator -->
+        <form action="{{ url_for('generate_random') }}" method="POST" class="flex items-center space-x-2">
+            <label for="count" class="text-sm font-medium text-slate-700">Generate:</label>
+            <input type="number" id="count" name="count" min="1" max="100" value="5" class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-16 sm:text-sm border-slate-300 rounded-md p-1.5 border" required>
+            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                <svg class="-ml-1 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+                Insert Random
+            </button>
+        </form>
+    </div>
+
+    <form method="POST" class="space-y-6">
+        <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+            <h3 class="text-lg font-medium leading-6 text-slate-900 mb-4">Personal Information</h3>
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                
+                <div class="sm:col-span-3">
+                    <label for="id_card" class="block text-sm font-medium text-slate-700">ID Card</label>
+                    <div class="mt-1">
+                        <input type="text" id="id_card" name="id_card" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border">
+                    </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                    <label for="phone" class="block text-sm font-medium text-slate-700">Phone</label>
+                    <div class="mt-1">
+                        <input type="text" id="phone" name="phone" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border">
+                    </div>
+                </div>
+
+                <div class="sm:col-span-6">
+                    <label for="name" class="block text-sm font-medium text-slate-700">Full Name</label>
+                    <div class="mt-1">
+                        <input type="text" id="name" name="name" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border">
+                    </div>
+                </div>
+
+                <div class="sm:col-span-6">
+                    <label for="client_type" class="block text-sm font-medium text-slate-700">Client Type</label>
+                    <div class="mt-1">
+                        <select id="client_type" name="client_type" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border bg-white">
+                            <option value="Private">Private</option>
+                            <option value="EPS">EPS</option>
+                            <option value="Prepaid">Prepaid</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+            <h3 class="text-lg font-medium leading-6 text-slate-900 mb-4">Appointment Details</h3>
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                
+                <div class="sm:col-span-3">
+                    <label for="attention_type" class="block text-sm font-medium text-slate-700">Attention Type</label>
+                    <div class="mt-1">
+                        <select id="attention_type" name="attention_type" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border bg-white" onchange="validateQuantity()">
+                            <option value="Cleaning">Cleaning (Quantity: 1)</option>
+                            <option value="Fillings">Fillings</option>
+                            <option value="Extraction">Extraction</option>
+                            <option value="Diagnosis">Diagnosis (Quantity: 1)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                    <label for="quantity" class="block text-sm font-medium text-slate-700">Quantity</label>
+                    <div class="mt-1">
+                        <input type="number" id="quantity" name="quantity" min="1" value="1" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border">
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500" id="quantity-help">For cleaning and diagnosis, must be 1.</p>
+                </div>
+
+                <div class="sm:col-span-3">
+                    <label for="appointment_date" class="block text-sm font-medium text-slate-700">Appointment Date</label>
+                    <div class="mt-1">
+                        <input type="date" id="appointment_date" name="appointment_date" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border">
+                    </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                    <label for="appointment_time" class="block text-sm font-medium text-slate-700">Appointment Time</label>
+                    <div class="mt-1">
+                        <input type="time" id="appointment_time" name="appointment_time" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border">
+                    </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                    <label for="priority" class="block text-sm font-medium text-slate-700">Priority</label>
+                    <div class="mt-1">
+                        <select id="priority" name="priority" required class="shadow-sm focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md p-2 border bg-white">
+                            <option value="Normal">Normal</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="pt-5 flex justify-end">
+            <a href="{{ url_for('index') }}" class="bg-white py-2 px-4 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 mr-3">
+                Cancel
+            </a>
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
+                Register Client
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Logic to auto-adjust "quantity" constraints dynamically
+    function validateQuantity() {
+        const attention = document.getElementById('attention_type').value;
+        const quantityInput = document.getElementById('quantity');
+        const helpText = document.getElementById('quantity-help');
+        
+        if (attention === 'Cleaning' || attention === 'Diagnosis') {
+            quantityInput.value = 1;
+            quantityInput.setAttribute('readonly', true);
+            quantityInput.classList.add('bg-slate-100', 'text-slate-500');
+            helpText.classList.replace('text-slate-500', 'text-brand-600');
+            helpText.innerText = `Fixed at 1 for ${attention}.`;
+        } else {
+            quantityInput.removeAttribute('readonly');
+            quantityInput.classList.remove('bg-slate-100', 'text-slate-500');
+            helpText.classList.replace('text-brand-600', 'text-slate-500');
+            helpText.innerText = 'Can be greater than 1.';
+        }
+    }
+
+    // Call once on load
+    validateQuantity();
+
+</script>
+{% endblock %}

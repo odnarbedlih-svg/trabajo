@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sm:flex sm:items-center sm:justify-between border-b border-slate-200 pb-5 mb-8">
+    <div>
+        <h2 class="text-2xl font-bold leading-7 text-rose-700 flex items-center gap-2">
+            <svg class="h-6 w-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            Contingency: Urgent Extractions (Stack)
+        </h2>
+        <p class="mt-2 text-sm text-slate-500">Contingency plan. Attended by prioritizing the closest appointment date (Last in, first out adapted by date).</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+        <form method="POST">
+            <button type="submit" 
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white {% if stack %}bg-rose-600 hover:bg-rose-700{% else %}bg-slate-400 cursor-not-allowed{% endif %} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                {% if not stack %}disabled{% endif %}>
+                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Attend Urgency
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="bg-rose-50 rounded-lg p-6 border border-rose-200 shadow-inner">
+    
+    <div class="flex flex-col gap-3 relative">
+        <!-- Visualization of a stack -->
+        {% for client in stack %}
+            <div class="bg-white rounded-lg shadow-md border-2 {% if loop.index == 1 %}border-rose-500 z-10 transform scale-100{% else %}border-rose-200 opacity-90 scale-95{% endif %} p-4 flex justify-between items-center transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 relative">
+                        {% if loop.index == 1 %}
+                            <span class="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-1 rounded text-[10px] font-bold bg-rose-500 text-white uppercase tracking-wider shadow-sm z-20">
+                                Top
+                            </span>
+                            <img class="h-12 w-12 rounded-full border-2 border-rose-500 object-cover shadow-sm" src="{{ url_for('static', filename='img/' + client.gender + '_avatar.png') }}" alt="Avatar">
+                        {% else %}
+                            <span class="absolute -top-2 -right-2 inline-flex items-center justify-center h-5 w-5 rounded-full bg-rose-100 text-rose-600 font-bold text-[10px] border border-rose-200 z-20">
+                                {{ loop.index }}
+                            </span>
+                            <img class="h-12 w-12 rounded-full border border-rose-200 object-cover" src="{{ url_for('static', filename='img/' + client.gender + '_avatar.png') }}" alt="Avatar">
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900">{{ client.name }}</h4>
+                        <p class="text-sm text-slate-500">ID: {{ client.id_card }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mb-1">
+                        URGENT
+                    </span>
+                    <p class="text-sm font-medium text-slate-700 flex items-center justify-end">
+                        <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Appt Date: {{ client.appointment_date }} {{ client.appointment_time }}
+                    </p>
+                </div>
+            </div>
+            
+            {% if not loop.last %}
+            <div class="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-rose-200 -z-10" style="top: {{ loop.index * 100 }}px"></div>
+            {% endif %}
+            
+        {% else %}
+            <div class="text-center py-10 bg-white rounded-lg border border-dashed border-rose-300">
+                <svg class="mx-auto h-12 w-12 text-rose-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-rose-500 font-medium">No urgent extractions pending.</p>
+                <p class="text-sm text-rose-400">The stack is empty.</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+</div>
+{% endblock %}
